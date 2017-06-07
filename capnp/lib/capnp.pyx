@@ -385,6 +385,7 @@ cdef class _DynamicListReader:
     cdef C_DynamicList.Reader thisptr
     cdef public object _parent
     cdef _init(self, C_DynamicList.Reader other, object parent):
+
         self.thisptr = other
         self._parent = parent
         return self
@@ -597,30 +598,42 @@ cdef class _List_NestedNode_Reader:
 cdef to_python_reader(C_DynamicValue.Reader self, object parent):
     cdef int type = self.getType()
     if type == capnp.TYPE_BOOL:
+        print("capnp: to_python_reader: bool")
         return self.asBool()
     elif type == capnp.TYPE_INT:
+        print("capnp: to_python_reader: int")
         return self.asInt()
     elif type == capnp.TYPE_UINT:
+        print("capnp: to_python_reader: uint")
         return self.asUint()
     elif type == capnp.TYPE_FLOAT:
+        print("capnp: to_python_reader: float")
         return self.asDouble()
     elif type == capnp.TYPE_TEXT:
+        print("capnp: to_python_reader: text")
         temp_text = self.asText()
         return (<char*>temp_text.begin())[:temp_text.size()]
     elif type == capnp.TYPE_DATA:
+        print("capnp: to_python_reader: data")
         temp_data = self.asData()
         return <bytes>((<char*>temp_data.begin())[:temp_data.size()])
     elif type == capnp.TYPE_LIST:
+        print("capnp: to_python_reader: list")
         return _DynamicListReader()._init(self.asList(), parent)
     elif type == capnp.TYPE_STRUCT:
+        print("capnp: to_python_reader: struct")
         return _DynamicStructReader()._init(self.asStruct(), parent)
     elif type == capnp.TYPE_ENUM:
+        print("capnp: to_python_reader: enum")
         return _DynamicEnum()._init(self.asEnum(), parent)
     elif type == capnp.TYPE_VOID:
+        print("capnp: to_python_reader: void")
         return None
     elif type == capnp.TYPE_ANY_POINTER:
+        print("capnp: to_python_reader: any_pointer")
         return _DynamicObjectReader()._init(self.asObject(), parent)
     elif type == capnp.TYPE_CAPABILITY:
+        print("capnp: to_python_reader: capability")
         return _DynamicCapabilityClient()._init(self.asCapability(), parent)
     elif type == capnp.TYPE_UNKNOWN:
         raise KjException("Cannot convert type to Python. Type is unknown by capnproto library")
@@ -921,6 +934,7 @@ cdef _from_tuple(_DynamicListBuilder msg, tuple d):
 
 
 cdef class _DynamicEnum:
+
     cdef _init(self, capnp.DynamicEnum other, object parent):
         self.thisptr = other
         self._parent = parent
@@ -1005,6 +1019,7 @@ cdef class _DynamicEnumField:
         return str(self)
 
 cdef class _MessageSize:
+
     cdef public uint64_t word_count
     cdef public uint cap_count
 
