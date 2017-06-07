@@ -631,42 +631,32 @@ cdef to_python_reader(C_DynamicValue.Reader self, object parent):
 cdef to_python_builder(C_DynamicValue.Builder self, object parent):
     cdef int type = self.getType()
     if type == capnp.TYPE_BOOL:
-        print("to_python_builder: asBool")
         return self.asBool()
     elif type == capnp.TYPE_INT:
-        print("to_python_builder: asInt")
         return self.asInt()
     elif type == capnp.TYPE_UINT:
-        print("to_python_builder: asUint")
         return self.asUint()
     elif type == capnp.TYPE_FLOAT:
-        print("to_python_builder: asDouble")
         return self.asDouble()
     elif type == capnp.TYPE_TEXT:
         print("to_python_builder: asText")
         temp_text = self.asText()
+        print("to_python_builder: testSize: %d" % temp_text.size())
         return (<char*>temp_text.begin())[:temp_text.size()]
     elif type == capnp.TYPE_DATA:
-        print("to_python_builder: asData")
         temp_data = self.asData()
         return <bytes>((<char*>temp_data.begin())[:temp_data.size()])
     elif type == capnp.TYPE_LIST:
-        print("to_python_builder: asList")
         return _DynamicListBuilder()._init(self.asList(), parent)
     elif type == capnp.TYPE_STRUCT:
-        print("to_python_builder: asStruct")
         return _DynamicStructBuilder()._init(self.asStruct(), parent)
     elif type == capnp.TYPE_ENUM:
-        print("to_python_builder: asEnum")
         return _DynamicEnum()._init(self.asEnum(), parent)
     elif type == capnp.TYPE_VOID:
-        print("to_python_builder: asVoid")
         return None
     elif type == capnp.TYPE_ANY_POINTER:
-        print("to_python_builder: asAnyPointer")
         return _DynamicObjectBuilder()._init(self.asObject(), parent)
     elif type == capnp.TYPE_CAPABILITY:
-        print("to_python_builder: asCapability")
         return _DynamicCapabilityClient()._init(self.asCapability(), parent)
     elif type == capnp.TYPE_UNKNOWN:
         raise KjException("Cannot convert type to Python. Type is unknown by capnproto library")
