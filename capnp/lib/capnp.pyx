@@ -498,6 +498,7 @@ cdef class _DynamicListBuilder:
     cdef _init(self, C_DynamicList.Builder other, object parent):
         self.thisptr = other
         self._parent = parent
+        print(self.__repr__())
         return self
 
     cpdef _get(self, int64_t index):
@@ -641,16 +642,19 @@ cdef to_python_builder(C_DynamicValue.Builder self, object parent):
     elif type == capnp.TYPE_TEXT:
         print("to_python_builder: asText")
         temp_text = self.asText()
-        print("to_python_builder: testSize: %d" % temp_text.size())
+        print("to_python_builder: textSize: %d" % temp_text.size())
         return (<char*>temp_text.begin())[:temp_text.size()]
     elif type == capnp.TYPE_DATA:
         temp_data = self.asData()
         return <bytes>((<char*>temp_data.begin())[:temp_data.size()])
     elif type == capnp.TYPE_LIST:
+        print("to_python_builder: asList")
         return _DynamicListBuilder()._init(self.asList(), parent)
     elif type == capnp.TYPE_STRUCT:
+        print("to_python_builder: asStruct")
         return _DynamicStructBuilder()._init(self.asStruct(), parent)
     elif type == capnp.TYPE_ENUM:
+        print("to_python_builder: asEnum")
         return _DynamicEnum()._init(self.asEnum(), parent)
     elif type == capnp.TYPE_VOID:
         return None
@@ -924,10 +928,10 @@ cdef _from_tuple(_DynamicListBuilder msg, tuple d):
 
 
 cdef class _DynamicEnum:
-
     cdef _init(self, capnp.DynamicEnum other, object parent):
         self.thisptr = other
         self._parent = parent
+        print(self.__repr__())
         return self
 
     cpdef _as_str(self) except +reraise_kj_exception:
@@ -970,6 +974,7 @@ cdef class _DynamicEnum:
 cdef class _DynamicEnumField:
     cdef _init(self, proto):
         self.thisptr = proto
+        print(self._str())
         return self
 
     property raw:
@@ -1159,6 +1164,9 @@ cdef class _DynamicStructBuilder:
             registered_type = _type_registry.get(self.thisptr.getId(), None)
             if registered_type:
                 return registered_type[1](self)
+
+        print(self.__repr__())
+
         return self
 
     cdef _check_write(self):
@@ -1371,7 +1379,6 @@ cdef class _DynamicStructBuilder:
         :Raises: :exc:`KjException` if this struct doesn't contain a union
         """
         def __get__(_DynamicStructBuilder self):
-            print("capnp: requesting which")
             return self._which()
 
     cpdef adopt(self, field, _DynamicOrphan orphan):
