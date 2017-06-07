@@ -1159,6 +1159,7 @@ cdef class _DynamicStructBuilder:
         print getattr(person, 'field-with-hyphens') # for names that are invalid for python, use getattr
     """
     cdef _init(self, DynamicStruct_Builder other, object parent, bint isRoot = False, bint tryRegistry = True):
+
         self.thisptr = other
         self._parent = parent
         self.is_root = isRoot
@@ -1534,6 +1535,7 @@ cdef class _DynamicStructPipeline:
 
 cdef class _DynamicOrphan:
     cdef _init(self, C_DynamicOrphan other, object parent):
+
         self.thisptr = moveOrphan(other)
         self._parent = parent
         return self
@@ -1598,6 +1600,7 @@ cdef class _DynamicObjectBuilder:
     cdef public object _parent
 
     cdef _init(self, C_DynamicObject.Builder other, object parent):
+
         self.thisptr = new C_DynamicObject.Builder(other)
         self._parent = parent
         return self
