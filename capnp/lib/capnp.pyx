@@ -642,7 +642,8 @@ cdef to_python_builder(C_DynamicValue.Builder self, object parent):
     elif type == capnp.TYPE_TEXT:
         print("to_python_builder: asText")
         temp_text = self.asText()
-        print("to_python_builder: textSize: %d" % temp_text.size())
+        print("to_python_builder: text: %d" % temp_text.size())
+        print((<char*>temp_text.begin())[:temp_text.size()])
         return (<char*>temp_text.begin())[:temp_text.size()]
     elif type == capnp.TYPE_DATA:
         temp_data = self.asData()
